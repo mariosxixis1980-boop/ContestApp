@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CMP - Dashboard</title>
+  <style>
+    :root{
+      --bg:#070b13; --border:rgba(255,255,255,.12);
+      --text:#eaf1ff; --muted:rgba(255,255,255,.65);
+      --card1:rgba(255,255,255,.07); --card2:rgba(255,255,255,.04);
+      --green:rgba(46,204,113,.20); --greenb:rgba(46,204,113,.45);
+      --amber:rgba(241,196,15,.16); --amberb:rgba(241,196,15,.45);
+      --red:rgba(231,76,60,.14); --redb:rgba(231,76,60,.45);
+      --blue:rgba(52,152,219,.18); --blueb:rgba(52,152,219,.45);
+    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    body{
+      margin:0;min-height:100vh;padding:18px;color:var(--text);
+      background:
+        radial-gradient(900px 700px at 20% 0%, rgba(40,110,255,.25), transparent 55%),
+        radial-gradient(900px 700px at 80% 10%, rgba(0,255,170,.18), transparent 55%),
+        var(--bg);
+    }
+    .wrap{width:min(980px,100%);margin:0 auto}
+    .card{
+      background:linear-gradient(180deg,var(--card1),var(--card2));
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:0 18px 60px rgba(0,0,0,.55);
+      backdrop-filter:blur(10px);
+    }
+    h1{margin:0;font-size:44px}
+    .sub{margin-top:6px;color:var(--muted);font-weight:700}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+    .pill{
+      display:inline-block;padding:10px 14px;border:1px solid var(--border);
+      border-radius:999px;background:rgba(0,0,0,.25);font-weight:900
+    }
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:12px 14px;
+      border-radius:16px;
+      font-weight:900;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .bl{background:var(--blue);border-color:var(--blueb)}
+    .r{background:var(--red);border-color:var(--redb)}
+    .g{background:var(--green);border-color:var(--greenb)}
+    .notice{
+      margin-top:12px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:10px 12px;
+      background:rgba(0,0,0,.25);
+      font-weight:850;
+      display:none;
+    }
+    .notice.ok{background:var(--green);border-color:var(--greenb)}
+    .notice.warn{background:var(--amber);border-color:var(--amberb)}
+    .notice.err{background:var(--red);border-color:var(--redb)}
+    #matches{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+    .match{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:rgba(0,0,0,.18);
+      padding:12px;
+    }
+    .match.locked{
+      border-color: rgba(255, 70, 70, .65);
+      background: rgba(255, 70, 70, .10);
+      box-shadow: 0 0 0 1px rgba(255,70,70,.15) inset;
+    }
+
+    .matchTitle{font-weight:950}
+    .matchTime{color:var(--muted);font-weight:750;margin-top:4px}
+    select{
+      padding:10px 12px;border-radius:14px;border:1px solid var(--border);
+      background:rgba(0,0,0,.35);color:var(--text);font-weight:900;
+    }
+
+    /* Make the user's pick look locked (red) too */
+    select.lockedPick{
+      border-color: rgba(255, 70, 70, .75);
+      background: rgba(255, 70, 70, .10);
+      box-shadow: 0 0 0 1px rgba(255,70,70,.18) inset;
+    }
+  
+/* Final Week pill - strong green */
+#finalWeekPill{
+  background: rgba(0,255,0,.12);
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  box-shadow: 0 0 14px rgba(0,255,0,.35);
+}
+
+    .footer-legal{margin:22px auto 0;max-width:520px;text-align:center;font-size:13px;color:rgba(255,255,255,.65)}
+    .footer-legal a{margin:0 10px;color:rgba(255,255,255,.8);text-decoration:none}
+    .footer-legal a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>⚽ Dashboard</h1>
+      <div class="sub">Βάλε 1 / X / 2, πάτα Save (ή αλλάζει αυτόματα). Κλείδωμα πριν το deadline.</div>
+
+      <div class="row">
+        <a class="btn" href="leaderboard.html">🏆 Leaderboard</a>
+        <a class="btn" id="adminLink" href="admin.html" style="display:none;">🛠 Admin</a>
+        <button class="btn" id="lo" type="button">🚪 Logout</button>
+        <div class="pill" id="userPill">Χρήστης: -</div>
+      </div>
+
+      <div class="row">
+        <div class="pill" id="contestInfo">Contest: -</div>
+        <div class="pill" id="roundInfo">Αγωνιστική: -</div>
+        <div class="pill" id="deadlineInfo">Deadline: -</div>
+        <div class="pill" id="statusPill">Κατάσταση: -</div>
+	        <div class="pill" id="finalWeekPill" style="display:none;">🏁 Final Week</div>
+      </div>
+
+      <div class="row">
+        <button class="btn bl" id="buyBtn" type="button">🧠 Αγορά HELP (€1,99)</button>
+        <button class="btn r" id="lockBtn" type="button">🔒 Κλείδωμα προβλέψεων</button>
+      </div>
+
+      <div id="notice" class="notice"></div>
+
+      <div id="matches"></div>
+    </div>
+  </div>
+
+
+  <footer class="footer-legal">
+    <a href="rules.html" target="_blank">Κανονισμός</a>
+    <a href="terms.html" target="_blank">Όροι</a>
+    <a href="privacy.html" target="_blank">Privacy</a>
+  </footer>
+  <script type="module" src="./dashboard.js"></script>
+</body>
+</html>

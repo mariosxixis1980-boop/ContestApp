@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CMP • Κατάταξη</title>
+  <style>
+    :root{
+      --bg0:#070b12;
+      --bg1:#0b1220;
+      --card:#0f1b2d;
+      --card2:#0c1626;
+      --text:#e8eefc;
+      --muted:#a9b7d0;
+      --line:rgba(255,255,255,.10);
+      --accent:#38bdf8; /* cyan */
+      --good:#22c55e;
+      --warn:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(900px 600px at 85% 25%, rgba(34,197,94,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+      padding:20px;
+    }
+    .wrap{max-width:980px;margin:0 auto;}
+    .top{
+      display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(56,189,248,.9), rgba(34,197,94,.85));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    h1{font-size:28px;margin:0;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:13px;margin-top:2px}
+    .meta{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+      color:var(--muted);font-size:13px;
+    }
+    .pill{
+      padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      display:flex;gap:8px;align-items:center;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--accent);display:inline-block}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;border-radius:12px;
+      display:inline-flex;align-items:center;gap:8px;
+      transition:transform .08s ease, background .15s ease;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.09)}
+    .btn:active{transform:translateY(1px)}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+    .cardHead{
+      padding:14px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      background: rgba(0,0,0,.18);
+      border-bottom:1px solid var(--line);
+    }
+    .hint{color:var(--muted);font-size:13px;line-height:1.35}
+    .tableWrap{overflow:auto;}
+    table{width:100%;border-collapse:separate;border-spacing:0;min-width:720px;}
+    thead th{
+      text-align:left;
+      font-weight:700;
+      font-size:12px;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      color:rgba(232,238,252,.85);
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      position:sticky;top:0;z-index:1;
+    }
+    tbody td{
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      color:rgba(232,238,252,.92);
+      font-size:14px;
+      white-space:nowrap;
+    }
+    tbody tr:nth-child(odd){background: rgba(255,255,255,.02);}
+    tbody tr:hover{background: rgba(56,189,248,.08);}
+    .rank{
+      width:56px;
+      font-weight:800;
+    }
+    .player{
+      font-weight:700;
+    }
+    .num{font-variant-numeric: tabular-nums;}
+    .me{background: rgba(34,197,94,.10) !important;}
+    .me .player{color: rgba(34,197,94,.95);}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      font-size:13px;color:rgba(232,238,252,.92);
+    }
+    .badge .b{width:7px;height:7px;border-radius:99px;background:var(--good)}
+    .foot{
+      padding:12px 16px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      border-top:1px solid var(--line);
+      background: rgba(0,0,0,.16);
+    }
+    .error{
+      margin-top:12px;
+      color:#fecaca;
+      font-size:13px;
+      display:none;
+    }
+	    .winner{
+	      margin-top:12px;
+	      padding:12px 14px;
+	      border-radius:16px;
+	      background: rgba(0, 204, 102, .10);
+	      border:1px solid rgba(0, 204, 102, .28);
+	      color:#d6ffe6;
+	      font-size:13px;
+	      display:none;
+	    }
+	    .winner b{color:#ffffff}
+  
+/* Prize + good luck */
+.prizeBox{
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.04);
+}
+.prizeTitle{ font-weight: 800; margin-bottom: 6px; }
+.prizeText{ font-size: 16px; font-weight: 700; }
+
+.goodLuckBox{
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: .4px;
+}
+
+    .footer-legal{margin:22px auto 0;max-width:520px;text-align:center;font-size:13px;color:rgba(255,255,255,.65)}
+    .footer-legal a{margin:0 10px;color:rgba(255,255,255,.8);text-decoration:none}
+    .footer-legal a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Κατάταξη</h1>
+          <div class="sub">Cyprus Match Predict • Μόνο ο ενεργός διαγωνισμός</div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="pill" id="myRankPill"><span class="dot"></span><span>Η θέση σου: —</span></div>
+        <div class="pill"><span class="dot"></span><span id="contestPill">Φόρτωση διαγωνισμού…</span></div>
+        <a class="btn" href="./dashboard.html">← Πίσω στο Dashboard</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cardHead">
+        <div class="hint">
+          <div><strong>Κριτήρια ισοβαθμίας:</strong> Πόντοι → Μπόνους → Καλύτερο σερί μπόνους → Γύροι με 1 λάθος</div>
+          <div>Αν δεν υπάρχουν δεδομένα ακόμα, περίμενε να μπουν αποτελέσματα αγώνων.</div>
+        </div>
+        <div class="badge" title="Αυτό το leaderboard ενημερώνεται από views στη βάση">
+          <span class="b"></span> Live από Supabase
+        </div>
+      </div>
+	      <div id="winnerBox" class="winner"></div>
+
+      <div class="tableWrap">
+        <table aria-label="Πίνακας Κατάταξης">
+          <thead>
+            <tr>
+              <th style="width:72px;">#</th>
+              <th>Παίκτης</th>
+              <th style="width:110px;">Πόντοι</th>
+              <th style="width:110px;">Μπόνους</th>
+              <th style="width:190px;">Καλύτερο σερί</th>
+              <th style="width:170px;">Γύροι 1 λάθος</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <!-- JS fills -->
+          </tbody>
+        </table>
+      
+      <div id="prizeBox" class="prizeBox" style="display:none;">
+        <div class="prizeTitle">🎁 Δώρο Διαγωνισμού</div>
+        <div id="prizeText" class="prizeText"></div>
+      </div>
+
+      <div id="goodLuckBox" class="goodLuckBox" style="display:none;">
+        Καλή επιτυχία και καλή διασκέδαση
+      </div>
+
+</div>
+
+      <div class="foot">
+        * «Μπόνους» = πόσες φορές πήρες τα +2. «Καλύτερο σερί» = συνεχόμενες φορές που πήρες μπόνους.
+      </div>
+    </div>
+
+    <div id="errBox" class="error"></div>
+  </div>
+
+
+  <footer class="footer-legal">
+    <a href="rules.html" target="_blank">Κανονισμός</a>
+    <a href="terms.html" target="_blank">Όροι</a>
+    <a href="privacy.html" target="_blank">Privacy</a>
+  </footer>
+  <script type="module" src="./leaderboard.js"></script>
+</body>
+</html>
